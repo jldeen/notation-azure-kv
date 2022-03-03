@@ -19,25 +19,28 @@ function getLatestK8s {
    echo $latestVersion
 }
 
-# Environment variables / positional parameters and defaults. 
+# Environment variables / positional parameters and defaults.
+
+# Add ~/bin to PATH for the script only 
+export PATH=$PATH:~/bin
 
 # TODO make $1 and $2 required?
-keyName=$1
+read -p "Enter the key name used to sign and verify: "  keyName
 
-keySubjectName=$2
+read -p "Enter the key subject name: "  keySubjectName
 
-rgName=$3
+read -p "Enter the resource group to deploy into: "  rgName
 rgName=${rgName:-myakv-akv-rg}
 
 # The location to store the meta data for the deployment.
 location=${location:-southcentralus} # Currently only region to support premium ACR with Zone Redundancy
 
 # The version of k8s control plane
-k8sversion=$4
+read -p "Enter the Kubernetes version to use: "  k8sversion
 k8sversion=${k8sversion:-$(getLatestK8s)}
 
 # Environment Name (ACR, AKS, KV prefix)
-envPrefix=$5
+read -p "Enter the environment name: "  envPrefix
 envPrefix=${envPrefix:-myakv}
 
 # Install Notation CLI
@@ -51,6 +54,9 @@ function getNotationProject {
     # Choose a binary
     timestamp=20220121081115
     commit=17c7607
+    
+    # Check if ~/bin is there, if not create it 
+    [ -d ~/bin ] || mkdir ~/bin
 
     # Download Notation from pre-release
     curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/feat-kv-extensibility/notation-feat-kv-extensibility-$timestamp-$commit.tar.gz
